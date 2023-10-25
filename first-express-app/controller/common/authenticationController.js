@@ -5,9 +5,7 @@ const config = require("../../config");
 let tokens = [];
 
 function generateAccessToken(user) {
-  return jwt.sign({ id: user.id }, config.jwtSecret, {
-    expiresIn: "1h",
-  });
+  return jwt.sign({ id: user.id }, config.jwt);
 }
 
 module.exports = {
@@ -16,7 +14,7 @@ module.exports = {
     console.log(authhead);
     const token = authhead && authhead.split(" ")[1];
     if (!token) {
-      return res.sendStatus(401);
+      return res.sendStatus(404);
     }
     jwt.verify(token, config.jwtSecret, (err, user) => {
       console.log(err, user);
@@ -36,8 +34,6 @@ module.exports = {
       if (existingUser) {
         return res.status(400).json({ error: "Email is already in use" });
       }
-
-      // Hash the user's password
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await userService.createUser({
@@ -45,7 +41,6 @@ module.exports = {
         email,
         password: hashedPassword,
       });
-
       res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
       console.error("User registration error:", error);
@@ -59,11 +54,11 @@ module.exports = {
       // Get the user by email
       const user = await userService.getUserByEmail(email);
 
-      if (!user || !(await bcrypt.compare(password, user.password))) {
+      if (!user || !(await bcrypt.comparePasswords(password, user.password))) {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      // Generate a JWT token and store it in the tokens array
+      // Generate a JWT token
       const token = generateAccessToken(user);
       tokens.push(token);
 
