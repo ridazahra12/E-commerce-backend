@@ -1,7 +1,8 @@
 const User = require("../../models/definitions/users/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// Define and export the functions for user registration and login
+const config = require("../../config");
+
 module.exports = {
   // User registration function
   registerUser: async (req, res) => {
@@ -53,7 +54,7 @@ module.exports = {
       // Generate a JSON Web Token (JWT) for authentication
       const token = jwt.sign(
         { userId: user.id }, // Payload of the token
-        "0eb2fd3daf7be09969deb5af212c88ab", // Secret key for signing the token (replace with a secure key)
+        process.env.JWT_SECRET, // Use an environment variable for the secret key
         {
           expiresIn: "1h", // Token expiration time (1 hour in this example)
         }

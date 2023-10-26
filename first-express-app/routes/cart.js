@@ -10,7 +10,6 @@ router.post(
   authenticationController.authenticatetoken,
   cartController.addProductToCart
 );
-
 router.get("/cart", cartController.getUserCart);
 
 // Remove a product from the user's cart

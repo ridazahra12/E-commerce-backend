@@ -4,9 +4,14 @@ const sequelize = require("../../../common/dbConnection");
 const Category = sequelize.define(
   "Category",
   {
-    name: {
+    id: {
+      primaryKey: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+    },
+    category_name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   },
   { timestamps: true, paranoid: true, sequelize, modelName: "category" }

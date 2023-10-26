@@ -19,10 +19,8 @@ module.exports = {
   createCategory: async (req, res) => {
     try {
       // Get the category name from the request body
-      const { name } = req.body;
-
-      // Use the categoryService to create a new category
-      const category = await categoryService.createCategory(name);
+      const { category_name } = req.body;
+      const category = await categoryService.createCategory({ category_name });
 
       // Respond with the created category and a 201 status code
       res.status(201).json(category);
@@ -31,5 +29,9 @@ module.exports = {
       console.error(error);
       res.status(500).json({ error: "Failed to create a new category" });
     }
+  },
+  createCategoryHelper: async (data) => {
+    const userData = await categoryService.createCategory(data); //for having all the data of the user
+    return userData;
   },
 };

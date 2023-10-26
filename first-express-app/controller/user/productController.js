@@ -1,5 +1,5 @@
 const productService = require("../../service/productService");
-
+const categoryController = require("./categoryController");
 module.exports = {
   getProducts: async (req, res) => {
     try {
@@ -29,23 +29,21 @@ module.exports = {
   },
 
   // Create a new product
-  createProduct: async (req, res) => {
-    try {
-      // Get the product data from the request body
-      const productData = req.body;
-
-      // Use the productService to create a new product
-      const createdProduct = await productService.createProduct(productData);
-
-      // Respond with the created product and a 201 status code
-      res.status(201).json(createdProduct);
-    } catch (error) {
-      // Handle errors and return a 500 error response
-      console.error(error);
-      res.status(500).json({ error: "Failed to create a new product" });
-    }
+  createProducts: async (req, res) => {
+    const category_name = req.body.category_name;
+    const { product_name, price, description } = req.body;
+    const category = await categoryController.createCategoryHelper({
+      category_name,
+    });
+    const categoryId = category.id;
+    const data = await productService.createProduct({
+      categoryId,
+      product_name,
+      price,
+      description,
+    });
+    res.send(data);
   },
-
   // Update an existing product by ID
   updateProduct: async (req, res) => {
     try {

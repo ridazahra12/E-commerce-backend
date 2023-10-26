@@ -4,19 +4,20 @@ const sequelize = require("../../../common/dbConnection");
 const Product = sequelize.define(
   "Product",
   {
-    name: {
+    id: {
+      primaryKey: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+    },
+    product_name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     description: {
       type: DataTypes.TEXT,
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
-    },
-    categoryId: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

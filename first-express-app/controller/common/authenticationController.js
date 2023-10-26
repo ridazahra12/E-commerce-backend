@@ -2,7 +2,6 @@ const userService = require("../../service/userService");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("../../config");
-let tokens = [];
 
 function generateAccessToken(user) {
   return jwt.sign({ id: user.id }, config.jwt);
@@ -16,7 +15,7 @@ module.exports = {
     if (!token) {
       return res.sendStatus(404);
     }
-    jwt.verify(token, config.jwtSecret, (err, user) => {
+    jwt.verify(token, config.jwt, (err, user) => {
       console.log(err, user);
       if (err) {
         return res.sendStatus(403);
@@ -34,7 +33,8 @@ module.exports = {
       if (existingUser) {
         return res.status(400).json({ error: "Email is already in use" });
       }
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const saltRounds = 10; // Number of salt rounds
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const user = await userService.createUser({
         username,
@@ -54,13 +54,12 @@ module.exports = {
       // Get the user by email
       const user = await userService.getUserByEmail(email);
 
-      if (!user || !(await bcrypt.comparePasswords(password, user.password))) {
+      if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
       // Generate a JWT token
       const token = generateAccessToken(user);
-      tokens.push(token);
 
       res.json({ token });
     } catch (error) {

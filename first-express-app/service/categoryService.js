@@ -1,8 +1,9 @@
 const Category = require("../models/definitions/users/category");
 
 module.exports = {
-  createCategory: async (name) => {
-    const createdCategory = await Category.create({ name });
+  createCategory: async (categoryData) => {
+    // Modify the parameter to accept an object
+    const createdCategory = await Category.create(categoryData);
     return createdCategory;
   },
   getCategories: async () => {
